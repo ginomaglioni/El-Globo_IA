@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/autenticacion.service';
+import { AutenticacionService } from '../../services/autenticacion.service';
 import { DataService } from '../../services/data.service';
 import { Casillero } from '../../models/models';
 
@@ -13,7 +13,7 @@ import { Casillero } from '../../models/models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SocioDashboardComponent {
-  private autenticacionService = inject(AuthService);
+  private autenticacionService = inject(AutenticacionService);
   private dataService = inject(DataService);
 
   // convertir Observable a signal para leer usuario() sin suscribirse manualmente
@@ -61,7 +61,7 @@ export class SocioDashboardComponent {
 
     // FIX: Get enrolled activities from 'socioActividades' as 'Cobranza' doesn't contain activity details.
     const actividadesInscritoIds = new Set(
-      this.dataService.socioActividades()
+      this.dataService.socio_actividad()
         .filter(sa => sa.idSocio === socio.id)
         .map(sa => sa.idActividad)
     );

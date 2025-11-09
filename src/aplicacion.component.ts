@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/c
 import { RouterOutlet } from '@angular/router';
 import { BarraLateralComponent } from './components/compartido/barra-lateral/barra-lateral.component';
 import { EncabezadoComponent } from './components/compartido/encabezado/encabezado.component';
-import { AuthService } from './services/autenticacion.service';
+import { AutenticacionService } from './services/autenticacion.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -15,7 +15,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
   imports: [CommonModule, RouterOutlet, BarraLateralComponent, EncabezadoComponent, ReactiveFormsModule]
 })
 export class AplicacionComponent {
-  autenticacionService = inject(AuthService);
+  autenticacionService = inject(AutenticacionService);
 
   // convertir Observable a signal para poder usar usuario() y evitar subscribe en computed
   usuario = toSignal<any>(this.autenticacionService.usuarioActual, { initialValue: null });

@@ -5,7 +5,7 @@ import { provideZonelessChangeDetection, importProvidersFrom } from '@angular/co
 import { ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './src/interceptors/auth.interceptor';
-
+import { AutenticacionService } from './src/services/autenticacion.service';
 import { AplicacionComponent } from './src/aplicacion.component';
 import { APP_ROUTES } from './src/app.routes';
 
@@ -15,6 +15,7 @@ bootstrapApplication(AplicacionComponent, {
     provideRouter(APP_ROUTES, withHashLocation()),
     importProvidersFrom(ReactiveFormsModule),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+    AutenticacionService,
   ],
 }).catch((err) => console.error(err));
 

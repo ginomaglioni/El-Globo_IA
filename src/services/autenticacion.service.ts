@@ -1,5 +1,5 @@
 // src/app/services/auth.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -9,7 +9,7 @@ import { RespuestaLogin } from '../components/interfaces/respuesta-login';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AutenticacionService {
   private URL = 'http://localhost:3000/api/auth';
   private usuarioActualSubject = new BehaviorSubject<RespuestaLogin | null>(null);
 

@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/autenticacion.service';
+import { AutenticacionService } from '../../services/autenticacion.service';
 import { DataService } from '../../services/data.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 
@@ -12,7 +12,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CobradorDashboardComponent {
-  private autenticacionService = inject(AuthService);
+  private autenticacionService = inject(AutenticacionService);
   private dataService = inject(DataService);
 
   // convierto el Observable a signal para poder usar cobrador() en plantilla y TS

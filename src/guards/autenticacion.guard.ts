@@ -1,10 +1,10 @@
 // src/app/guards/auth.guard.ts
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, ActivatedRouteSnapshot } from '@angular/router';
-import { AuthService } from '../services/autenticacion.service';
+import { AutenticacionService } from '../services/autenticacion.service';
 
 export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
-  const auth = inject(AuthService);
+  const auth = inject(AutenticacionService);
   const router = inject(Router);
 
   if (!auth.estaLogueado()) {
