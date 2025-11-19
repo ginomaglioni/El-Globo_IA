@@ -2,28 +2,26 @@ import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/c
 import { RouterOutlet } from '@angular/router';
 import { BarraLateralComponent } from './components/compartido/barra-lateral/barra-lateral.component';
 import { EncabezadoComponent } from './components/compartido/encabezado/encabezado.component';
-import { AutenticacionService } from './services/autenticacion.service';
+import { AuthService } from './services/autenticacion.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-root',
+  // FIX: Make component standalone as it is the root component.
   standalone: true,
   templateUrl: './aplicacion.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterOutlet, BarraLateralComponent, EncabezadoComponent, ReactiveFormsModule]
 })
 export class AplicacionComponent {
-  autenticacionService = inject(AutenticacionService);
-
-  // convertir Observable a signal para poder usar usuario() y evitar subscribe en computed
-  usuario = toSignal<any>(this.autenticacionService.usuarioActual, { initialValue: null });
-
+  autenticacionService = inject(AuthService);
+  
   titulo = 'Club El Globo Management System';
+  usuario = toSignal(this.autenticacionService.usuarioActual);
 
-  esAdmin = computed(() => {
-    const u = this.usuario();
-    return !!u && u.rol === 'Administrador';
-  });
+  esAdmin(): boolean {
+    return this.usuario()?.usuario.rol === 'Administrador';
+}
 }

@@ -54,12 +54,12 @@ export class DataService {
   public readonly casilleros = this._casilleros.asReadonly();
   public readonly zonas = this._zonas.asReadonly();
   public readonly cobradores = this._cobradores.asReadonly();
-  public readonly socio_actividad = this._socioActividades.asReadonly();
+  public readonly socioActividades = this._socioActividades.asReadonly();
   public readonly cobranzas = this._cobranzas.asReadonly();
 
-  /*constructor() {
+  constructor() {
     this.loadInitialData();
-  }*/
+  }
 
   public sociosEnriquecidos = computed(() => {
     const socios = this.socios();

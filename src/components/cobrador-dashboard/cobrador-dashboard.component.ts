@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AutenticacionService } from '../../services/autenticacion.service';
+import { AuthService } from '../../services/autenticacion.service';
 import { DataService } from '../../services/data.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 
@@ -12,23 +12,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CobradorDashboardComponent {
-  private autenticacionService = inject(AutenticacionService);
+  private autenticacionService = inject(AuthService);
   private dataService = inject(DataService);
 
-  // convierto el Observable a signal para poder usar cobrador() en plantilla y TS
-  // uso any para evitar dependencia de un tipo no importado (RespuestaLogin)
-  cobrador = toSignal<any>(this.autenticacionService.usuarioActual, { initialValue: null });
-
-  ngOnInit() {
-    const cobradorActual = this.cobrador() as any; // cast para evitar "unknown" properties
-    if (!cobradorActual) {
-      console.warn('No se encontró un usuario autenticado');
-    }
-  }
+  cobrador = toSignal(this.autenticacionService.usuarioActual);
 
   // Central computed signal for all view data
   private vistaCobrador = computed(() => {
-    const cobradorActual = this.cobrador() as any;
+    const cobradorActual = this.cobrador();
     if (!cobradorActual) {
       return {
         estadisticas: { totalRecaudado: 0, comisionGanada: 0, cobranzasPendientes: 0 },
@@ -38,21 +29,21 @@ export class CobradorDashboardComponent {
     }
 
     // FIX: Find the cobrador record to get their ID for filtering.
-    const cobradorInfo = this.dataService.cobradores().find((c: any) => c.nombre === (cobradorActual?.nombreCompleto ?? cobradorActual?.nombre));
+    const cobradorInfo = this.dataService.cobradores().find(c => c.nombre === cobradorActual.usuario.nombreCompleto);
     const cobradorId = cobradorInfo?.id;
 
     const todasLasCobranzas = this.dataService.cobranzas();
     const todosLosSocios = this.dataService.socios();
 
     // FIX: Filter cobranzas by the current cobrador's ID.
-    const cobranzasDelCobrador = cobradorId ? todasLasCobranzas.filter((c: any) => c.idCobrador === cobradorId) : [];
+    const cobranzasDelCobrador = cobradorId ? todasLasCobranzas.filter(c => c.idCobrador === cobradorId) : [];
 
     // FIX: Base the list of socios on those with unpaid bills assigned to the cobrador.
     const listaSocios = todosLosSocios
-      .map((socio: any) => {
+      .map(socio => {
         const cobranzasSocio = todasLasCobranzas
-            .filter((c: any) => c.idSocio === socio.id)
-            .sort((a: any, b: any) => new Date(b.fechaEmision).getTime() - new Date(a.fechaEmision).getTime());
+            .filter(c => c.idSocio === socio.id)
+            .sort((a, b) => new Date(b.fechaEmision).getTime() - new Date(a.fechaEmision).getTime());
         
         const ultimaCobranza = cobranzasSocio.length > 0 ? cobranzasSocio[0] : null;
 
@@ -85,17 +76,17 @@ export class CobradorDashboardComponent {
 
     // 3. Calculate statistics from paid cobranzas by this collector.
     const pagos = cobranzasDelCobrador
-        .filter((p: any) => p.estado === 'Pago')
-        .sort((a: any, b: any) => new Date(b.fechaEmision).getTime() - new Date(a.fechaEmision).getTime());
+        .filter(p => p.estado === 'Pago')
+        .sort((a, b) => new Date(b.fechaEmision).getTime() - new Date(a.fechaEmision).getTime());
 
-    const totalRecaudado = pagos.reduce((acc: number, p: any) => acc + (p.monto ?? 0), 0);
+    const totalRecaudado = pagos.reduce((acc, p) => acc + p.monto, 0);
     // FIX: Calculate commission based on a fixed rate for the demo.
     const comisionGanada = totalRecaudado * 0.05; // Assuming 5%
     const cobranzasPendientes = listaSocios.length;
 
     const estadisticas = { totalRecaudado, comisionGanada, cobranzasPendientes };
-    const pagosRecientes = pagos.slice(0, 10).map((pago: any) => {
-      const socio = todosLosSocios.find((s: any) => s.id === pago.idSocio);
+    const pagosRecientes = pagos.slice(0, 10).map(pago => {
+      const socio = todosLosSocios.find(s => s.id === pago.idSocio);
       return {
         ...pago,
         nombreSocio: socio?.nombre ?? 'Desconocido'
@@ -112,9 +103,9 @@ export class CobradorDashboardComponent {
 
   // FIX: Parameter renamed to reflect it's a cobranza ID.
   registrarPago(idCobranza: number) {
-    const cobradorActual = this.cobrador() as any;
+    const cobradorActual = this.cobrador();
     // FIX: Find the cobrador's numeric ID to pass to the service.
-    const cobradorInfo = this.dataService.cobradores().find((c: any) => c.nombre === (cobradorActual?.nombreCompleto ?? cobradorActual?.nombre));
+    const cobradorInfo = this.dataService.cobradores().find(c => c.nombre === cobradorActual?.usuario.nombreCompleto);
     if (cobradorInfo) {
       this.dataService.registrarPago(idCobranza, cobradorInfo.id);
     } else {

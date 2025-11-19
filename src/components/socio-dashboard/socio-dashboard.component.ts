@@ -1,9 +1,9 @@
 import { Component, ChangeDetectionStrategy, computed, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { AutenticacionService } from '../../services/autenticacion.service';
+import { AuthService } from '../../services/autenticacion.service';
 import { DataService } from '../../services/data.service';
 import { Casillero } from '../../models/models';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-socio-dashboard',
@@ -13,11 +13,11 @@ import { Casillero } from '../../models/models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SocioDashboardComponent {
-  private autenticacionService = inject(AutenticacionService);
+  private autenticacionService = inject(AuthService);
   private dataService = inject(DataService);
 
-  // convertir Observable a signal para leer usuario() sin suscribirse manualmente
-  usuario = toSignal<any>(this.autenticacionService.usuarioActual, { initialValue: null });
+ 
+   usuario = toSignal(this.autenticacionService.usuarioActual);
 
   // Modal state
   actividadParaBaja = signal<{id: number, nombre: string} | null>(null);
@@ -29,7 +29,7 @@ export class SocioDashboardComponent {
   // Enriched data for the socio's view
   datosSocio = computed(() => {
     const usuarioActual = this.usuario();
-    if (!usuarioActual || !usuarioActual.idSocio) {
+    if (!usuarioActual || !usuarioActual.usuario.idSocio) {
       return {
         socio: null,
         categoria: null,
@@ -40,7 +40,7 @@ export class SocioDashboardComponent {
       };
     }
 
-    const socio = this.dataService.socios().find(s => s.id === usuarioActual.idSocio);
+    const socio = this.dataService.socios().find(s => s.id === usuarioActual.usuario.idSocio);
     if (!socio) {
       return {
         socio: null,
@@ -61,7 +61,7 @@ export class SocioDashboardComponent {
 
     // FIX: Get enrolled activities from 'socioActividades' as 'Cobranza' doesn't contain activity details.
     const actividadesInscritoIds = new Set(
-      this.dataService.socio_actividad()
+      this.dataService.socioActividades()
         .filter(sa => sa.idSocio === socio.id)
         .map(sa => sa.idActividad)
     );
