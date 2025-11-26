@@ -1,3 +1,5 @@
+//data.service.ts
+
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, tap } from 'rxjs';
@@ -107,7 +109,7 @@ export class DataService {
 
   addSocio(socio: Omit<Socio, 'id'>): void {
     const payload = convertKeys(socio, camelToSnake);
-    this.http.post<{ id: number }>(`${this.baseUrl}/socios`, payload)
+    this.http.post<{ id: number }>(`${this.baseUrl}/socios`, socio)
       .subscribe(response => {
         const nuevoSocio = { ...socio, id: response.id };
         this._socios.update(socios => [...socios, nuevoSocio]);
@@ -116,7 +118,7 @@ export class DataService {
 
   updateSocio(socioActualizado: Socio): void {
     const payload = convertKeys(socioActualizado, camelToSnake);
-    this.http.put(`${this.baseUrl}/socios/${socioActualizado.id}`, payload)
+    this.http.put(`${this.baseUrl}/socios/${socioActualizado.id}`, socioActualizado)
       .subscribe(() => {
         this._socios.update(socios => socios.map(s => s.id === socioActualizado.id ? socioActualizado : s));
       });

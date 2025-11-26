@@ -1,3 +1,5 @@
+//socios.component.ts
+
 import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
@@ -12,16 +14,20 @@ type SocioEnriquecido = Omit<Socio, 'nombre' | 'apellido'> & { nombre: string; a
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './socios.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  /*imports: [CommonModule, ReactiveFormsModule],*/
 })
 export class SociosComponent {
   private dataService = inject(DataService);
   private fb: FormBuilder = inject(FormBuilder);
-  
+
+  socios = this.dataService.socios;
+
+
   modalAbierto = signal(false);
-  socioEditando = signal<SocioEnriquecido | null>(null);
+  socioEditando = signal<Socio | null>(null);
 
   modalEliminarAbierto = signal(false);
-  socioParaEliminar = signal<SocioEnriquecido | null>(null);
+  socioParaEliminar = signal<Socio | null>(null);
   
   filtro = signal('');
   paginaActual = signal(1);
@@ -107,7 +113,7 @@ export class SociosComponent {
     }
   }
 
-  abrirModal(socio: SocioEnriquecido | null) {
+  abrirModal(socio: Socio | null) {
     this.socioEditando.set(socio);
     if (socio) {
       this.formularioSocio.patchValue(socio);
