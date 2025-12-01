@@ -16,8 +16,8 @@ interface NavLink {
   template: `
     <aside class="w-64 h-full bg-gray-800 text-gray-200 flex-shrink-0 flex flex-col transition-all duration-300">
       <div class="p-6 text-center font-bold text-2xl tracking-wider border-b border-gray-700">
-        El Globo 🎈
-      </div>
+      <img src="/assets/imagenes/logoglobo.png" alt="" class="h-10 w-auto">
+</div>
       <nav class="mt-6 flex-1 overflow-y-auto">
         <ul class="space-y-2">
           @for (link of navLinks(); track link.path) {
@@ -48,7 +48,7 @@ export class SidebarComponent {
     { path: '/panel/dashboard', label: 'Dashboard', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
     { path: '/panel/socios', label: 'Socios', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-1.78-4.125' },
     { path: '/panel/actividades', label: 'Actividades', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
-    { path: '/panel/casilleros', label: 'Casilleros', icon: 'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4' },
+    //{ path: '/panel/casilleros', label: 'Casilleros', icon: 'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4' },
     { path: '/panel/cobranzas', label: 'Cobranzas', icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z' },
     { path: '/panel/rendicion', label: 'Rendición', icon: 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z' },
   ]);

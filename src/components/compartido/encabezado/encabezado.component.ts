@@ -1,3 +1,5 @@
+/*encabezado.component.ts*/
+
 // FIX: Re-implemented the EncabezadoComponent as a standalone component. The original file content was invalid placeholder text, which caused multiple compilation errors.
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -16,7 +18,9 @@ import { AuthService } from '../../../services/autenticacion.service';
         <div class="flex items-center justify-between h-16">
           <!-- Page Title -->
           <div>
-            <h1 class="text-xl font-semibold text-gray-900 dark:text-white">{{ pageTitle() }}</h1>
+            <a routerLink="/" style="text-decoration: none;">
+            <h1 class="text-xl font-semibold text-gray-900 dark:text-white cursor-pointer hover:text-blue-600 dark:hover:text-blue-400">{{ pageTitle() }}</h1>
+            </a>
           </div>
 
           <!-- User Info & Logout -->
@@ -55,9 +59,9 @@ export class EncabezadoComponent {
     this.router.events.pipe(
       filter((event): event is ActivationEnd => event instanceof ActivationEnd),
       filter((event: ActivationEnd) => event.snapshot.firstChild === null),
-      map((event: ActivationEnd) => event.snapshot.data['title'] || 'Club Management')
+      map((event: ActivationEnd) => event.snapshot.data['title'] || 'Club El Globo')
     ),
-    { initialValue: 'Club Management' }
+    { initialValue: 'Club El Globo' }
   );
 
   usuario = this.autenticacionService.usuarioActual;

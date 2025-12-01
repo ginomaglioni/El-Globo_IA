@@ -102,10 +102,32 @@ export class DataService {
       this._cobradores.set(convertKeys(data.cobradores, snakeToCamel));
       this._cobranzas.set(convertKeys(data.cobranzas, snakeToCamel));
       
+      // 🛑 CAMBIO CRÍTICO AQUÍ: Limpiar fechas después de la conversión de claves
+      const sociosCamelCase = convertKeys(data.socios, snakeToCamel) as Socio[];
+      this._socios.set(this.cleanSocioDates(sociosCamelCase)); 
+      
+      this._actividades.set(convertKeys(data.actividades, snakeToCamel));
+      // ... resto de asignaciones
+
+
       // Load static data as API endpoints are not available
       this.cargarDatosEstaticos();
     });
   }
+
+  /**
+   * MODIFICACIÓN DE GEMINI
+   ------------------------------------------------------------------------------------*/
+
+  private cleanSocioDates(socios: Socio[]): Socio[] {
+    return socios.map(s => ({
+        ...s,
+        // Aseguramos que la fecha es 'YYYY-MM-DD', cortando el 'T...' si existe
+        fechaNacimiento: s.fechaNacimiento ? s.fechaNacimiento.split('T')[0] : ''
+    }));
+}
+
+/*-------------------------------------------------------------------------------------*/
 
   addSocio(socio: Omit<Socio, 'id'>): void {
     const payload = convertKeys(socio, camelToSnake);
@@ -116,13 +138,36 @@ export class DataService {
       });
   }
 
-  updateSocio(socioActualizado: Socio): void {
+  /*updateSocio(socioActualizado: Socio): void {
     const payload = convertKeys(socioActualizado, camelToSnake);
     this.http.put(`${this.baseUrl}/socios/${socioActualizado.id}`, socioActualizado)
       .subscribe(() => {
         this._socios.update(socios => socios.map(s => s.id === socioActualizado.id ? socioActualizado : s));
       });
-  }
+  }*/
+
+ updateSocio(socioActualizado: Socio): void {
+    const payload = convertKeys(socioActualizado, camelToSnake);
+    
+    // Dejamos socioActualizado aquí, ya que confirmaste que así la DB guarda correctamente.
+    this.http.put(`${this.baseUrl}/socios/${socioActualizado.id}`, socioActualizado)
+        .subscribe(() => {
+            
+            // 🛑 CORRECCIÓN CLAVE: Normalizar la fecha antes de actualizar la señal.
+            // Esto asegura que la fecha almacenada localmente en Angular sea 'YYYY-MM-DD'.
+            const socioLimpioParaSignal: Socio = {
+                ...socioActualizado,
+                // Si ya es 'YYYY-MM-DD', esto es inofensivo. 
+                // Si es 'YYYY-MM-DDTHH...', esto lo limpia.
+                fechaNacimiento: socioActualizado.fechaNacimiento.split('T')[0] 
+            };
+            
+            // Actualizar la señal con el objeto que tiene la fecha en formato limpio.
+            this._socios.update(socios => socios.map(s => 
+                s.id === socioLimpioParaSignal.id ? socioLimpioParaSignal : s
+            ));
+        });
+}
 
   deleteSocio(id: number): void {
     this.http.delete(`${this.baseUrl}/socios/${id}`)
