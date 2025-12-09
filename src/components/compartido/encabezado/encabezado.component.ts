@@ -30,6 +30,8 @@ import { AuthService } from '../../../services/autenticacion.service';
                 <div class="flex flex-col items-end">
                     <span class="font-medium text-gray-800 dark:text-gray-200">{{ user.nombreCompleto }}</span>
                     <span class="text-xs text-gray-500 dark:text-gray-400">{{ user.rol }}</span>
+                    <span class="font-medium text-gray-800 dark:text-gray-200">{{ usuario.usuario }}</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">{{ usuario.rol }}</span>
                 </div>
                 <button (click)="logout()"
                         class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

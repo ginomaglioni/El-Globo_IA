@@ -16,6 +16,8 @@ export class SocioDashboardComponent {
   private autenticacionService = inject(AuthService);
   private dataService = inject(DataService);
 
+  socioActividad = this.dataService.socioActividades;
+
  
    usuario = toSignal(this.autenticacionService.usuarioActual);
 
