@@ -88,6 +88,7 @@ export class DataService {
   // --- API Methods ---
   private loadInitialData(): void {
     forkJoin({
+      usuarios: this.http.get<any[]>(`${this.baseUrl}/usuarios`),
       categorias: this.http.get<any[]>(`${this.baseUrl}/categorias`),
       socios: this.http.get<any[]>(`${this.baseUrl}/socios`),
       actividades: this.http.get<any[]>(`${this.baseUrl}/actividades`),
@@ -95,6 +96,7 @@ export class DataService {
       cobradores: this.http.get<any[]>(`${this.baseUrl}/cobradores`),
       cobranzas: this.http.get<any[]>(`${this.baseUrl}/cobranzas`)
     }).subscribe(data => {
+      this._usuarios.set(convertKeys(data.usuarios, snakeToCamel));
       this._categorias.set(convertKeys(data.categorias, snakeToCamel));
       this._socios.set(convertKeys(data.socios, snakeToCamel));
       this._actividades.set(convertKeys(data.actividades, snakeToCamel));
@@ -198,7 +200,59 @@ export class DataService {
         this._actividades.update(actividades => actividades.filter(a => a.id !== id));
       });
   }
+
+  // ---------------------------------------------------------------------------------------------------------------------------------------------------
+  addUsuario(usuario: Omit<Usuario, 'id'>): void {
+    this.http.post<{ id: number }>(`${this.baseUrl}/usuarios`, usuario)
+      .subscribe(response => {
+        this._usuarios.update(usuarios => [...usuarios, { ...usuario, id: response.id }]);
+      });
+  }
+
+  updateUsuario(usuarioActualizado: Usuario): void {
+    this.http.put(`${this.baseUrl}/usuarios/${usuarioActualizado.id}`, usuarioActualizado)
+      .subscribe(() => {
+        this._usuarios.update(usuarios => 
+          usuarios.map(a => a.id === usuarioActualizado.id ? usuarioActualizado : a)
+        );
+      });
+  }
   
+  deleteUsuario(id: number): void {
+    this.http.delete(`${this.baseUrl}/usuarios/${id}`)
+      .subscribe(() => {
+        this._usuarios.update(usuarios => usuarios.filter(a => a.id !== id));
+      });
+  }
+
+ // ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+ // ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+  addCobrador(cobrador: Omit<Cobrador, 'id'>): void {
+    this.http.post<{ id: number }>(`${this.baseUrl}/cobradores`, cobrador)
+      .subscribe(response => {
+        this._cobradores.update(cobradors => [...cobradors, { ...cobrador, id: response.id }]);
+      });
+  }
+
+  updateCobrador(cobradorActualizado: Cobrador): void {
+    this.http.put(`${this.baseUrl}/cobradores/${cobradorActualizado.id}`, cobradorActualizado)
+      .subscribe(() => {
+        this._cobradores.update(cobradores => 
+          cobradores.map(a => a.id === cobradorActualizado.id ? cobradorActualizado : a)
+        );
+      });
+  }
+
+   deleteCobrador(id: number): void {
+    this.http.delete(`${this.baseUrl}/cobradores/${id}`)
+      .subscribe(() => {
+        this._cobradores.update(cobradores => cobradores.filter(a => a.id !== id));
+      });
+  }
+  // ---------------------------------------------------------------------------------------------------------------------------------------------------
+
   addCasillero(casillero: Omit<Casillero, 'id' | 'estado' | 'idSocio'>): void {
     const payload = { ...convertKeys(casillero, camelToSnake), estado: 'Disponible' };
     this.http.post<{ id: number }>(`${this.baseUrl}/casilleros`, payload)
@@ -304,7 +358,7 @@ export class DataService {
     ];
     this._socioActividades.set(socioActividades);
 
-    // This is also static as the auth API doesn't provide user details beyond id/role.
+   /* // This is also static as the auth API doesn't provide user details beyond id/role.
     const usuarios: Usuario[] = [
        { id: 1, nombreUsuario: 'jose', contrasena: '123456', nombreCompleto: 'Ricardo Darin', rol: 'Socio', idSocio: 3 },
        { id: 2, nombreUsuario: 'admin', contrasena: '654321', nombreCompleto: 'Administrador', rol: 'Administrador' },
@@ -312,6 +366,6 @@ export class DataService {
        { id: 4, nombreUsuario: 'mgomez', contrasena: '1234', nombreCompleto: 'Maria Gomez', rol: 'Socio', idSocio: 2 },
        { id: 5, nombreUsuario: 'cobrador', contrasena: 'cobranza', nombreCompleto: 'Jose', rol: 'Cobrador' },
     ];
-    this._usuarios.set(usuarios);
+    this._usuarios.set(usuarios);*/
   }
 }

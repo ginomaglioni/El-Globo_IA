@@ -9,6 +9,7 @@ export interface Usuario {
   nombreCompleto: string;
   rol: Rol;
   idSocio?: number; // Link to a Socio if the role is 'Socio'
+  idCobrador?: number;
 }
 
 export interface Categoria {
@@ -38,6 +39,14 @@ export interface Actividad {
   nombre: string;
   costo: number;
   turno: string; // e.g., "Mañana", "Tarde", "Mañana - Tarde"
+}
+
+export interface nombreUsuario {
+  id: number;
+  usuario: string;
+  contrasena: string;
+  rol: Rol;
+  idSocio?: number;
 }
 
 export interface Casillero {
